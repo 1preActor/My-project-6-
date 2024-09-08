@@ -4,10 +4,10 @@ using UnityEngine.Pool;
 public class Cloud : MonoBehaviour
 {
     [SerializeField] private GameObject _prefab;
-    [SerializeField] private int _poolCapaciti = 40;
+    [SerializeField] private int _poolCapacity = 40;
     [SerializeField] private int _poolMaxSize = 100;
-    [SerializeField] private int  _cloudHeight = 50;
-    [SerializeField] private float _cloudSize = 10;
+    [SerializeField] private int _cloudHeight = 60;
+    [SerializeField] private float _cloudSize = 20;
 
     private ObjectPool<GameObject> _pool;
 
@@ -19,7 +19,7 @@ public class Cloud : MonoBehaviour
         actionOnRelease: (obj) => obj.SetActive(false),
         actionOnDestroy: (obj) => Destroy(obj),
         collectionCheck: true,
-        defaultCapacity: _poolCapaciti,
+        defaultCapacity: _poolCapacity,
         maxSize: _poolMaxSize);
     }
 
@@ -33,18 +33,19 @@ public class Cloud : MonoBehaviour
 
     private void OnEnable()
     {
-        Cube.CubeFalled += ReturnCubeInCloud;
+        Cube.Fallen += ReturnCubeInCloud;
     }
 
     private void OnDisable()
     {
-        Cube.CubeFalled -= ReturnCubeInCloud;
+        Cube.Fallen -= ReturnCubeInCloud;
     }
 
     private void ActionOnGet(GameObject obj)
     {
         obj.transform.position = new Vector3(Random.Range(-_cloudSize, _cloudSize), _cloudHeight, Random.Range(-_cloudSize, _cloudSize));
         obj.SetActive(true);
+        obj.GetComponent<Renderer>().material.color = Color.white;
     }
 
     private void GetCube() => _pool.Get();

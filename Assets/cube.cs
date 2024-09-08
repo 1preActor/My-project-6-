@@ -6,7 +6,7 @@ using System;
 
 public class Cube : MonoBehaviour
 {
-    public static event Action<GameObject> CubeFalled;
+    public static event Action<GameObject> Fallen;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -20,18 +20,16 @@ public class Cube : MonoBehaviour
         float lifetimeMinCube = 2f;
         float lifetimeMaxCube = 5f;
         float delay = UnityEngine.Random.Range(lifetimeMinCube, lifetimeMaxCube);
-        Color cubeStartColor = new Color(1, 1, 1);
 
-        StartCoroutine(CountUp(delay, cubeStartColor));
+        StartCoroutine(CountUp(delay));
     }
 
-    private IEnumerator CountUp(float delay, Color cubeStartColor)
+    private IEnumerator CountUp(float delay)
     {
         var wait = new WaitForSeconds(delay);
 
         yield return wait;
 
-        GetComponent<Renderer>().material.color = cubeStartColor;
-        CubeFalled.Invoke(gameObject);
+        Fallen.Invoke(gameObject);
     }
 }
