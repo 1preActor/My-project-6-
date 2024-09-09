@@ -6,7 +6,12 @@ using System;
 
 public class Cube : MonoBehaviour
 {
-    public static event Action<GameObject> Fallen;
+    public event Action<Cube> Fallen;
+
+    //private void Awake()
+    //{
+    //    GetComponent<Renderer>().material.color = UnityEngine.Random.ColorHSV();
+    //}
 
     private void OnTriggerEnter(Collider other)
     {
@@ -30,6 +35,6 @@ public class Cube : MonoBehaviour
 
         yield return wait;
 
-        Fallen.Invoke(gameObject);
+        Fallen?.Invoke(this);
     }
 }
