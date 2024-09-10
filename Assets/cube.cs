@@ -2,38 +2,69 @@ using System.Collections;
 using UnityEngine;
 using System;
 
-[RequireComponent(typeof(Renderer))]
+[RequireComponent(typeof(Renderer),typeof(Collider))]
 
 public class Cube : MonoBehaviour
 {
+    private Coroutine _releaseWaiter;
+    private Renderer _renderer;
+    private WaitForSecondsRealtime _wait;
+
+    private float _timeBeforeRelease;
+    private float _maxReleaseTime;
+    private float _minReleaseTime;
+    private bool _isDeactivated;
+
     public event Action<Cube> Fallen;
 
-    //private void Awake()
-    //{
-    //    GetComponent<Renderer>().material.color = UnityEngine.Random.ColorHSV();
-    //}
-
-    private void OnTriggerEnter(Collider other)
+    private void Awake()
     {
-        Init();
+        _renderer = GetComponent<Renderer>();
+
+        _maxReleaseTime = 5f;
+        _minReleaseTime = 2f;
+
+        _isDeactivated = false;
     }
 
-    private void Init()
+    private void OnCollisionEnter(Collision collision)
     {
-        GetComponent<Renderer>().material.color = UnityEngine.Random.ColorHSV();
+        if (collision.gameObject.GetComponent<Platform>() != null && _isDeactivated == false)
+        {
+            _isDeactivated = true;
 
-        float lifetimeMinCube = 2f;
-        float lifetimeMaxCube = 5f;
-        float delay = UnityEngine.Random.Range(lifetimeMinCube, lifetimeMaxCube);
+            _renderer.material.color = UnityEngine.Random.ColorHSV();
 
-        StartCoroutine(CountUp(delay));
+            _timeBeforeRelease = UnityEngine.Random.Range(_minReleaseTime, _maxReleaseTime);
+            _wait = new WaitForSecondsRealtime(_timeBeforeRelease);
+
+            RestartWaiting();
+        }
     }
 
-    private IEnumerator CountUp(float delay)
+    private void OnEnable()
     {
-        var wait = new WaitForSeconds(delay);
+        _isDeactivated = false;
 
-        yield return wait;
+        _renderer.material.color = Color.white;
+    }
+
+    private void OnDisable()
+    {
+        if (_releaseWaiter != null)
+        {
+            StopCoroutine(_releaseWaiter);
+        }
+    }
+
+    private void RestartWaiting()
+    {
+        _releaseWaiter = StartCoroutine(CountUp());
+    }
+
+    private IEnumerator CountUp()
+    {
+        yield return _wait;
 
         Fallen?.Invoke(this);
     }
