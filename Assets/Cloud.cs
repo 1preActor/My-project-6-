@@ -50,7 +50,6 @@ public class Cloud : MonoBehaviour
     private void ReturnCubeInCloud(Cube cube)
     {
         cube.Fallen -= ReturnCubeInCloud;
-
         _pool.Release(cube);
     }
 }
