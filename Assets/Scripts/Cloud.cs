@@ -22,9 +22,9 @@ public class Cloud : MonoBehaviour
 
             return result;
         },
-        actionOnGet: (obj) => ActionOnGet(obj),
+        actionOnGet: (obj) => GetAction(obj),
         actionOnRelease: (obj) => obj.gameObject.SetActive(false),
-        actionOnDestroy: (obj) => Destroy(obj),
+        actionOnDestroy: (obj) => Destroy(obj.gameObject),
         collectionCheck: true,
         defaultCapacity: _poolCapacity,
         maxSize: _poolMaxSize);
@@ -38,7 +38,7 @@ public class Cloud : MonoBehaviour
         InvokeRepeating(nameof(GetCube), rainStartTime, cubeRepeatTime);
     }
 
-    private void ActionOnGet(Cube obj)
+    private void GetAction(Cube obj)
     {
         obj.transform.position = new Vector3(Random.Range(-_cloudSize, _cloudSize), _cloudHeight, Random.Range(-_cloudSize, _cloudSize));
         obj.gameObject.SetActive(true);
